@@ -1,0 +1,255 @@
+@import "tailwindcss";
+
+:root {
+  color-scheme: light;
+
+  --duration-exit: 150ms;
+  --duration-enter: 210ms;
+  --duration-move: 400ms;
+  --duration-tarot-exit: 450ms;
+  --duration-tarot-enter: 900ms;
+
+  --background: #ffe7c6;
+  --foreground: #1a3b5d;
+
+  --coral: #ff5a4f;
+  --turquoise: #2ac4bf;
+  --cream: #ffe7c6;
+  --navy: #1a3b5d;
+  --peach: #f0a66c;
+
+  --surface: #fff4e4;
+  --muted: rgb(26 59 93 / 70%);
+  --border: rgb(26 59 93 / 20%);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    color-scheme: dark;
+
+    --background: #102a43;
+    --foreground: #ffe7c6;
+
+    --surface: #1a3b5d;
+    --muted: rgb(255 231 198 / 72%);
+    --border: rgb(255 231 198 / 22%);
+  }
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+
+  --color-coral: var(--coral);
+  --color-turquoise: var(--turquoise);
+  --color-cream: var(--cream);
+  --color-navy: var(--navy);
+  --color-peach: var(--peach);
+
+  --color-surface: var(--surface);
+  --color-muted: var(--muted);
+  --color-border: var(--border);
+
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+* {
+  box-sizing: border-box;
+}
+::view-transition-group(site-header) {
+  animation: none;
+  z-index: 100;
+}
+::view-transition-old(site-header) {
+  display: none;
+}
+::view-transition-new(site-header) {
+  animation: none;
+}
+
+::view-transition-group(gallery-back-link) {
+  animation: none;
+  z-index: 100;
+}
+
+::view-transition-old(gallery-back-link) {
+  display: none;
+}
+
+::view-transition-new(gallery-back-link) {
+  animation: none;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  min-height: 100vh;
+  margin: 0;
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
+  transition:
+    background-color 250ms ease,
+    color 250ms ease;
+}
+
+::view-transition {
+  pointer-events: none;
+}
+
+.hero-navy-reveal {
+  position: relative;
+  isolation: isolate;
+  overflow: clip;
+}
+
+.hero-navy-reveal::after {
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+  pointer-events: none;
+  content: "";
+  background: linear-gradient(
+    to top,
+    var(--navy) 0%,
+    var(--navy) 45%,
+    rgb(26 59 93 / 82%) 68%,
+    transparent 100%
+  );
+  transform: translateY(100%);
+}
+
+@supports (animation-timeline: view()) {
+  .hero-navy-reveal::after {
+    animation: navy-rise linear both;
+    animation-timeline: view(block);
+    animation-range: exit 0% exit 100%;
+  }
+}
+
+@keyframes navy-rise {
+  to {
+    transform: translateY(0);
+  }
+}
+
+@keyframes scale-down {
+  from {
+    transform: scale(1);
+    opacity: 1;
+  }
+
+  to {
+    transform: scale(0.85);
+    opacity: 0;
+  }
+}
+
+@keyframes scale-up {
+  from {
+    transform: scale(0.85);
+    opacity: 0;
+  }
+
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes fade {
+  from {
+    filter: blur(3px);
+    opacity: 0;
+  }
+
+  to {
+    filter: blur(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slide {
+  from {
+    translate: var(--slide-offset);
+  }
+
+  to {
+    translate: 0;
+  }
+}
+
+::view-transition-new(.fade-in) {
+  animation: var(--duration-enter) ease-out var(--duration-exit) both fade;
+}
+
+::view-transition-old(.nav-forward) {
+  --slide-offset: -60px;
+  animation:
+    var(--duration-exit) ease-in both fade reverse,
+    var(--duration-move) ease-in-out both slide reverse;
+}
+
+::view-transition-new(.nav-forward) {
+  --slide-offset: 60px;
+  animation:
+    var(--duration-enter) ease-out var(--duration-exit) both fade,
+    var(--duration-move) ease-in-out both slide;
+}
+
+::view-transition-old(.nav-back) {
+  --slide-offset: 60px;
+  animation:
+    var(--duration-exit) ease-in both fade reverse,
+    var(--duration-move) ease-in-out both slide reverse;
+}
+
+::view-transition-new(.nav-back) {
+  --slide-offset: -60px;
+  animation:
+    var(--duration-enter) ease-out var(--duration-exit) both fade,
+    var(--duration-move) ease-in-out both slide;
+}
+
+::view-transition-group(.morph) {
+  animation-duration: var(--duration-move);
+}
+
+::view-transition-image-pair(.morph) {
+  animation-name: via-blur;
+}
+
+@keyframes via-blur {
+  30% {
+    filter: blur(3px);
+  }
+}
+
+::view-transition-old(.scale-out) {
+  animation: var(--duration-tarot-exit) ease-in scale-down;
+}
+
+::view-transition-new(.scale-in) {
+  animation: var(--duration-tarot-enter) ease-out var(--duration-tarot-exit)
+    both scale-up;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  ::view-transition-old(*),
+  ::view-transition-new(*),
+  ::view-transition-group(*) {
+    animation-duration: 0s !important;
+    animation-delay: 0s !important;
+  }
+
+  .hero-navy-reveal::after {
+    display: none;
+  }
+}
