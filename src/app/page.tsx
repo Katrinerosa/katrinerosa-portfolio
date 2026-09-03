@@ -1,5 +1,9 @@
 import Hero from "@/components/Hero";
-import WorkGallery from "@/components/WorkGallery";
+import SelectedWork from "@/components/SelectedWork";
+import TarotPreview from "@/components/TarotPreview";
+import IllustrationPreview from "@/components/IllustrationPreview";
+import About from "@/components/About";
+import Contact from "@/components/Contact";
 import { ViewTransition } from "react";
 
 export default function Home() {
@@ -20,7 +24,11 @@ export default function Home() {
       >
         <main>
           <Hero />
-          <WorkGallery />
+          <SelectedWork />
+          <TarotPreview />
+          <IllustrationPreview />
+          <About />
+          <Contact />
         </main>
       </ViewTransition>
     </>

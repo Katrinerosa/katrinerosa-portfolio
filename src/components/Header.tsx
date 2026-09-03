@@ -9,38 +9,42 @@ export default function Header() {
       <div className="mx-auto flex h-20 max-w-7xl items-center justify-between px-6">
         <Link
           href="/"
-          className="hidden font-semibold uppercase tracking-[0.15em] hover:text-coral sm:block"
+          className="text-[0.65rem] font-semibold uppercase tracking-[0.14em] hover:text-coral sm:text-sm sm:tracking-[0.15em]"
         >
           Katrine Rosa
         </Link>
 
         <nav aria-label="Main navigation">
-          <ul className="flex items-center gap-3 text-xs font-medium sm:gap-5 sm:text-sm">
+          <ul className="flex items-center gap-3 text-[0.7rem] font-medium sm:gap-5 sm:text-sm">
             <li>
-              <Link href="/" className="hover:text-coral">
-                Home
+              <Link href="/#work" className="hover:text-coral">
+                Work
               </Link>
             </li>
 
             <li>
-              <Link href="/#work" className="hover:text-coral">
-                Gallery
+              <Link
+                href="/gallery"
+                transitionTypes={["nav-forward"]}
+                className="hover:text-coral"
+              >
+                Illustration
               </Link>
             </li>
 
             <li>
               <Link href="/tarot" className="hover:text-coral">
-                Draw a card
+                Tarot
               </Link>
             </li>
 
-            <li>
+            <li className="hidden md:block">
               <Link href="/#about" className="hover:text-coral">
                 About
               </Link>
             </li>
 
-            <li>
+            <li className="hidden md:block">
               <Link href="/#contact" className="hover:text-coral">
                 Contact
               </Link>

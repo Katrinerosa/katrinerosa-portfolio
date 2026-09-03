@@ -1,55 +1,35 @@
 import Image from "next/image";
-import Link from "next/link";
+import wulfricNight from "@/images/wulfric-dark-knight.png";
 
 export default function Hero() {
-    return (
-        <section className="hero-navy-reveal bg-background text-foreground">
-            <div className="mx-auto grid min-h-[calc(100svh-5rem)] max-w-7xl items-center gap-12 px-6 py-16 lg:grid-cols-[0.8fr_1.2fr]">
-                <div>
-                    <p className="mb-6 text-sm font-semibold uppercase tracking-[0.2em] text-coral">
-                        Creative developer · Designer · Illustrator
-                    </p>
+  return (
+    <section className="relative h-[clamp(30rem,62svh,44rem)] overflow-hidden bg-[#191d2b] lg:h-[clamp(34rem,62svh,52rem)]">
+      <Image
+        src={wulfricNight}
+        alt=""
+        fill
+        priority
+        aria-hidden="true"
+        className="object-cover object-[72%_center] lg:object-center"
+        sizes="100vw"
+      />
 
-                    <h1 className="text-5xl font-semibold leading-[0.95] tracking-[-0.04em] sm:text-6xl lg:text-7xl">
-                        I build digital worlds where{" "}
-                        <span className="text-coral">code</span> meets{" "}
-                        <span className="italic text-turquoise">storytelling.</span>
-                    </h1>
+      <div className="relative z-10 mx-auto flex min-h-[52svh] max-w-7xl items-center px-6 sm:min-h-[58svh] lg:min-h-[62svh] lg:px-8">
+        <div className="max-w-2xl text-white">
+          <p className="mb-4 text-sm uppercase tracking-[0.25em] text-white/60">
+            Katrine Rosa Beck
+          </p>
 
-                    <p className="mt-8 max-w-xl text-lg leading-relaxed text-muted">
-                        I&apos;m Katrine Rosa Beck. I create playful, accessible digital
-                        experiences through development, design and illustration.
-                    </p>
+          <h1 className="text-4xl font-semibold leading-tight tracking-tight sm:text-5xl lg:text-6xl">
+            Frontend developer, illustrator, and founder.
+          </h1>
 
-                    <div className="mt-10 flex flex-wrap gap-4">
-                        <Link
-                            href="#work"
-                            className="rounded-full bg-coral px-6 py-3 font-semibold text-navy transition hover:-translate-y-1 hover:bg-peach"
-                        >
-                            Explore my work
-                        </Link>
-
-                        <Link
-                            href="#contact"
-                            className="rounded-full border-2 border-foreground px-6 py-3 font-semibold transition hover:border-turquoise hover:text-turquoise"
-                        >
-                            Let&apos;s talk
-                        </Link>
-                    </div>
-                </div>
-
-                <div className="overflow-hidden rounded-[2rem] bg-navy shadow-2xl">
-                    <Image
-                        src="/luna-wulfric-by-the-fire-hero.png"
-                        alt="Luna and Wulfric resting by the fire beneath a dragon"
-                        width={4000}
-                        height={3000}
-                        priority
-                        sizes="(min-width: 1024px) 55vw, 100vw"
-                        className="h-auto w-full"
-                    />
-                </div>
-            </div>
-        </section>
-    );
+          <p className="mt-6 max-w-xl text-lg leading-relaxed text-white/70 sm:text-xl">
+            I create digital worlds where code, illustration, and storytelling
+            meet.
+          </p>
+        </div>
+      </div>
+    </section>
+  );
 }

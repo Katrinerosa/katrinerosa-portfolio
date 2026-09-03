@@ -16,7 +16,7 @@
   --turquoise: #2ac4bf;
   --cream: #ffe7c6;
   --navy: #1a3b5d;
-  --peach: #f0a66c;
+  --peach: #F6E4D1;
 
   --surface: #fff4e4;
   --muted: rgb(26 59 93 / 70%);
@@ -96,8 +96,105 @@ body {
     color 250ms ease;
 }
 
+.advent-door {
+  position: relative;
+  aspect-ratio: 1;
+  border: 1px solid rgb(255 255 255 / 72%);
+  border-radius: 0.8rem;
+  outline: none;
+  background: transparent;
+  box-shadow: none;
+  overflow: hidden;
+  perspective: 900px;
+  cursor: pointer;
+}
+
+.advent-door:focus-visible {
+  outline: 3px solid #92d5f6;
+  outline-offset: 3px;
+}
+
+.advent-door-content,
+.advent-door-flap {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  overflow: hidden;
+}
+
+.advent-door-content {
+  background: #05080c;
+  opacity: 0;
+  transition: opacity 180ms ease;
+}
+
+.advent-door-flap {
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  color: #fff;
+  background: transparent;
+  box-shadow: none;
+  transform-origin: left center;
+  transition: transform 650ms cubic-bezier(0.2, 0.75, 0.2, 1);
+  backface-visibility: hidden;
+  font-size: clamp(1.1rem, 2.4vw, 1.65rem);
+  font-weight: 700;
+  text-shadow: 0 2px 8px rgb(0 0 0 / 70%);
+}
+
+.advent-door:hover:not(.is-open) .advent-door-flap {
+  transform: rotateY(-8deg);
+}
+
+.advent-door.is-open {
+  overflow: visible;
+  z-index: 3;
+}
+
+.advent-door.is-open .advent-door-content {
+  opacity: 1;
+}
+
+.advent-door.is-open .advent-door-flap {
+  transform: rotateY(-112deg);
+  box-shadow: none;
+}
+
+.advent-snowflake {
+  position: absolute;
+  top: -2rem;
+  color: rgb(255 255 255 / 80%);
+  text-shadow: 0 2px 8px rgb(255 255 255 / 35%);
+  animation: advent-snowfall linear infinite;
+}
+
+@keyframes advent-snowfall {
+  to {
+    transform: translate3d(30px, calc(100vh + 4rem), 0) rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .advent-door-flap {
+    transition: none;
+  }
+
+  .advent-snowflake {
+    display: none;
+  }
+}
+
 ::view-transition {
   pointer-events: none;
+}
+
+::view-transition-old(root) {
+  display: none;
+}
+
+::view-transition-new(root) {
+  animation: none;
 }
 
 .hero-navy-reveal {
@@ -182,8 +279,34 @@ body {
   }
 }
 
+@keyframes slide-y {
+  from {
+    transform: translateY(var(--slide-y-offset, 10px));
+  }
+
+  to {
+    transform: translateY(0);
+  }
+}
+
+::view-transition-old(.fade-out) {
+  animation: var(--duration-exit) ease-in fade reverse;
+}
+
 ::view-transition-new(.fade-in) {
   animation: var(--duration-enter) ease-out var(--duration-exit) both fade;
+}
+
+::view-transition-old(.slide-down) {
+  animation:
+    var(--duration-exit) ease-out both fade reverse,
+    var(--duration-exit) ease-out both slide-y reverse;
+}
+
+::view-transition-new(.slide-up) {
+  animation:
+    var(--duration-enter) ease-in var(--duration-exit) both fade,
+    var(--duration-move) ease-in both slide-y;
 }
 
 ::view-transition-old(.nav-forward) {
@@ -219,13 +342,17 @@ body {
 }
 
 ::view-transition-image-pair(.morph) {
-  animation-name: via-blur;
+  isolation: auto;
 }
 
-@keyframes via-blur {
-  30% {
-    filter: blur(3px);
-  }
+::view-transition-old(.morph) {
+  display: none;
+}
+
+::view-transition-new(.morph) {
+  height: 100%;
+  animation: none;
+  object-fit: cover;
 }
 
 ::view-transition-old(.scale-out) {
