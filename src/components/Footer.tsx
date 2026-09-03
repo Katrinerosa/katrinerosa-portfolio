@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import CookieSettingsButton from "@/components/CookieSettingsButton";
 
 export default function Footer() {
   return (
@@ -58,7 +59,10 @@ export default function Footer() {
       <div className="border-t border-cream/15 bg-cream/5">
         <div className="mx-auto flex max-w-7xl flex-col gap-2 px-6 py-5 text-xs text-cream/40 sm:flex-row sm:items-center sm:justify-between">
           <span>© 2026 Katrine Rosa Beck</span>
-          <span>Frontend · Illustration · Storytelling</span>
+          <div className="flex items-center gap-4">
+            <CookieSettingsButton />
+            <span>Frontend · Illustration · Storytelling</span>
+          </div>
         </div>
       </div>
     </footer>
