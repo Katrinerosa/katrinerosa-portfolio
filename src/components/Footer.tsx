@@ -1,8 +1,17 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import CookieSettingsButton from "@/components/CookieSettingsButton";
+import SocialLinks from "@/components/SocialLinks";
+import { useLocale } from "@/lib/use-locale";
 
 export default function Footer() {
+  const pathname = usePathname();
+  const locale = useLocale(pathname);
+  const isEnglish = locale === "en";
+  const homePath = isEnglish ? "/en" : "/";
   return (
     <footer className="overflow-hidden border-t border-cream/15 bg-[#0d2947] text-cream">
       <div className="mx-auto grid max-w-7xl gap-12 px-6 py-16 sm:py-20 lg:grid-cols-[1.35fr_0.8fr_0.8fr] lg:gap-16">
@@ -22,19 +31,20 @@ export default function Footer() {
               Katrine Rosa
             </p>
             <p className="mt-3 max-w-sm text-sm leading-6 text-cream/65">
-              Frontendudvikler og illustrator, der skaber digitale verdener
-              med kode, karakter og fortælling.
+              {isEnglish
+                ? "Frontend developer and illustrator creating digital worlds with code, character, and storytelling."
+                : "Frontendudvikler og illustrator, der skaber digitale verdener med kode, karakter og fortælling."}
             </p>
           </div>
         </div>
 
         <div>
           <h2 className="text-sm font-semibold uppercase tracking-[0.16em] text-coral">
-            Kontakt
+            {isEnglish ? "Contact" : "Kontakt"}
           </h2>
           <p className="mt-5 text-lg font-medium">Katrine Rosa Beck</p>
           <p className="mt-1 text-sm text-cream/60">
-            Frontendudvikler · Illustrator
+            {isEnglish ? "Frontend developer · Illustrator" : "Frontendudvikler · Illustrator"}
           </p>
           <a
             href="mailto:hej@katrinerosa.com"
@@ -42,16 +52,21 @@ export default function Footer() {
           >
             hej@katrinerosa.com
           </a>
+          <SocialLinks locale={locale} variant="footer" />
         </div>
 
         <nav aria-label="Footer navigation">
           <h2 className="text-sm font-semibold uppercase tracking-[0.16em] text-coral">
-            Udforsk
+            {isEnglish ? "Explore" : "Udforsk"}
           </h2>
           <div className="mt-5 flex flex-col items-start gap-3 text-sm text-cream/70">
-            <Link href="/#work" className="transition-colors hover:text-coral">Work</Link>
-            <Link href="/gallery" className="transition-colors hover:text-coral">Illustration</Link>
-            <Link href="/tarot" className="transition-colors hover:text-coral">Tarot</Link>
+            <Link href={`${homePath}#work`} className="transition-colors hover:text-coral">
+              {isEnglish ? "Work" : "Projekter"}
+            </Link>
+            <Link href="/gallery" className="transition-colors hover:text-coral">
+              {isEnglish ? "Illustration" : "Illustrationer"}
+            </Link>
+            <Link href={isEnglish ? "/en/tarot" : "/tarot"} className="transition-colors hover:text-coral">Tarot</Link>
           </div>
         </nav>
       </div>
@@ -60,7 +75,7 @@ export default function Footer() {
         <div className="mx-auto flex max-w-7xl flex-col gap-2 px-6 py-5 text-xs text-cream/40 sm:flex-row sm:items-center sm:justify-between">
           <span>© 2026 Katrine Rosa Beck</span>
           <div className="flex items-center gap-4">
-            <CookieSettingsButton />
+            <CookieSettingsButton locale={locale} />
             <span>Frontend · Illustration · Storytelling</span>
           </div>
         </div>

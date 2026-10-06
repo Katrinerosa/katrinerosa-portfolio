@@ -1,8 +1,10 @@
 import Image from "next/image";
+import type { Locale } from "@/lib/locale";
 
-export default function About() {
+export default function About({ locale }: { locale: Locale }) {
+  const isDanish = locale === "da";
   return (
-    <section id="about" className="bg-[#d8eee8] px-6 py-24 sm:py-32">
+    <section id="about" className="bg-surface px-6 py-24 sm:py-32">
       <div className="mx-auto grid max-w-6xl items-center gap-16 md:grid-cols-[0.75fr_1.25fr]">
         <div className="relative mx-auto aspect-square w-full max-w-sm overflow-hidden rounded-full bg-[#f8e2d7]">
           <Image
@@ -15,15 +17,15 @@ export default function About() {
         </div>
         <div>
           <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#a54f60]">
-            About
+            {isDanish ? "Om" : "About"}
           </p>
-          <h2 className="mt-5 text-4xl font-semibold tracking-[-0.045em] text-navy sm:text-6xl">
-            Code meets illustration.
+          <h2 className="mt-5 text-4xl font-semibold tracking-[-0.045em] text-foreground sm:text-6xl">
+            {isDanish ? "Kode møder illustration." : "Code meets illustration."}
           </h2>
-          <p className="mt-6 max-w-2xl text-lg leading-8 text-navy/70">
-            I&apos;m Katrine Rosa Beck, a frontend developer and illustrator
-            creating digital experiences with atmosphere, personality, and
-            purpose.
+          <p className="mt-6 max-w-2xl text-lg leading-8 text-muted">
+            {isDanish
+              ? "Jeg er Katrine Rosa Beck, frontendudvikler og illustrator. Jeg skaber digitale oplevelser med stemning, personlighed og mening."
+              : "I’m Katrine Rosa Beck, a frontend developer and illustrator creating digital experiences with atmosphere, personality, and purpose."}
           </p>
         </div>
       </div>

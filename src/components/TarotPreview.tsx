@@ -1,34 +1,37 @@
 import Image from "next/image";
 import Link from "next/link";
+import type { Locale } from "@/lib/locale";
 
 const cards = [
-  { src: "/cards/the-magician.svg", alt: "The Magician tarot card" },
-  { src: "/cards/the-star.svg", alt: "The Star tarot card" },
-  { src: "/cards/the-world.svg", alt: "The World tarot card" },
+  { src: "/cards/Mayor-Arcana/the-fool.svg", alt: "The Fool tarot card" },
+  { src: "/cards/Mayor-Arcana/the-high-priestess.svg", alt: "The High Priestess tarot card" },
+  { src: "/cards/Mayor-Arcana/the-moon.svg", alt: "The Moon tarot card" },
 ];
 
-export default function TarotPreview() {
+export default function TarotPreview({ locale }: { locale: Locale }) {
+  const isDanish = locale === "da";
   return (
     <section id="tarot-preview" className="overflow-hidden bg-[#171b29] px-6 py-24 text-cream sm:py-32">
       <div className="mx-auto grid max-w-7xl items-center gap-16 lg:grid-cols-2">
         <div>
           <p className="text-xs font-semibold uppercase tracking-[0.2em] text-turquoise">
-            Interactive storytelling
+            {isDanish ? "Interaktiv fortælling" : "Interactive storytelling"}
           </p>
           <h2 className="mt-5 text-4xl font-semibold tracking-[-0.045em] sm:text-6xl">
-            Before you go,
+            {isDanish ? "Inden du går," : "Before you go,"}
             <br />
-            draw a card.
+            {isDanish ? "træk et kort." : "draw a card."}
           </h2>
           <p className="mt-6 max-w-lg text-lg leading-8 text-cream/65">
-            Choose a hand-illustrated tarot card and receive a small creative
-            prompt.
+            {isDanish
+              ? "Vælg et håndillustreret tarotkort og få en lille kreativ tanke med dig."
+              : "Choose a hand-illustrated tarot card and receive a small creative prompt."}
           </p>
           <Link
-            href="/tarot"
+            href={isDanish ? "/tarot" : "/en/tarot"}
             className="mt-8 inline-flex rounded-full bg-coral px-6 py-3 text-sm font-semibold text-navy transition hover:-translate-y-1 hover:bg-peach"
           >
-            Draw a card
+            {isDanish ? "Træk et kort" : "Draw a card"}
           </Link>
         </div>
 

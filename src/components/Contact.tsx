@@ -1,8 +1,10 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import type { Locale } from "@/lib/locale";
 
-const contactLinks = [
+const contactLinks = {
+  en: [
   { label: "Get in touch", className: "bg-navy text-cream" },
   { label: "Have a world in mind?", className: "bg-coral text-navy" },
   { label: "Let’s make it real", className: "bg-turquoise text-navy" },
@@ -12,18 +14,39 @@ const contactLinks = [
   { label: "I have cake", className: "bg-cream text-navy" },
   { label: "Coffee?", className: "bg-turquoise text-navy" },
   { label: "Lots of coffee", className: "bg-coral text-navy" },
-];
+  { label: "Build something strange", className: "bg-[#fbdc4d] text-navy" },
+  { label: "Tell me your idea", className: "bg-[#d8eee8] text-navy" },
+  { label: "Make it magical", className: "bg-[#a54f60] text-cream" },
+  ],
+  da: [
+    { label: "Tag kontakt", className: "bg-navy text-cream" },
+    { label: "Har du en verden i tankerne?", className: "bg-coral text-navy" },
+    { label: "Lad os gøre den virkelig", className: "bg-turquoise text-navy" },
+    { label: "Start et projekt", className: "bg-peach text-navy" },
+    { label: "Sig hej", className: "bg-[#d8eee8] text-navy" },
+    { label: "Skriv til mig", className: "bg-[#a54f60] text-cream" },
+    { label: "Jeg har kage", className: "bg-cream text-navy" },
+    { label: "Kaffe?", className: "bg-turquoise text-navy" },
+    { label: "Masser af kaffe", className: "bg-coral text-navy" },
+    { label: "Byg noget mærkeligt", className: "bg-[#fbdc4d] text-navy" },
+    { label: "Fortæl mig din idé", className: "bg-[#d8eee8] text-navy" },
+    { label: "Gør det magisk", className: "bg-[#a54f60] text-cream" },
+  ],
+};
 
 const desktopAnchors = [
-  [0.2, 0.2], [0.5, 0.17], [0.78, 0.21],
-  [0.16, 0.5], [0.47, 0.47], [0.78, 0.5],
-  [0.23, 0.78], [0.52, 0.76], [0.8, 0.79],
+  [0.16, 0.18], [0.39, 0.14], [0.62, 0.18], [0.84, 0.15],
+  [0.15, 0.5], [0.39, 0.46], [0.62, 0.51], [0.85, 0.47],
+  [0.17, 0.81], [0.4, 0.77], [0.63, 0.82], [0.83, 0.78],
 ];
 
 const mobileAnchors = [
-  [0.25, 0.1], [0.7, 0.1], [0.23, 0.3],
-  [0.69, 0.29], [0.28, 0.49], [0.72, 0.48],
-  [0.23, 0.68], [0.69, 0.68], [0.48, 0.88],
+  [0.26, 0.08], [0.74, 0.08],
+  [0.26, 0.25], [0.74, 0.25],
+  [0.26, 0.42], [0.74, 0.42],
+  [0.26, 0.59], [0.74, 0.59],
+  [0.26, 0.76], [0.74, 0.76],
+  [0.26, 0.93], [0.74, 0.93],
 ];
 
 type Bubble = {
@@ -35,18 +58,21 @@ type Bubble = {
   anchorX: number;
   anchorY: number;
   radius: number;
+  halfWidth: number;
+  halfHeight: number;
 };
 
-export default function Contact() {
+export default function Contact({ locale }: { locale: Locale }) {
   const fieldRef = useRef<HTMLDivElement>(null);
   const bubbleRefs = useRef<(HTMLAnchorElement | null)[]>([]);
+  const links = contactLinks[locale];
 
   useEffect(() => {
     const field = fieldRef.current;
     const elements = bubbleRefs.current.filter(
       (element): element is HTMLAnchorElement => element !== null,
     );
-    if (!field || elements.length !== contactLinks.length) return;
+    if (!field || elements.length !== links.length) return;
 
     let frameId = 0;
     let pointer: { x: number; y: number } | null = null;
@@ -54,7 +80,7 @@ export default function Contact() {
 
     const layout = () => {
       const bounds = field.getBoundingClientRect();
-      const anchors = bounds.width < 600 ? mobileAnchors : desktopAnchors;
+      const anchors = bounds.width < 760 ? mobileAnchors : desktopAnchors;
       bubbles = elements.map((element, index) => {
         const anchorX = bounds.width * anchors[index][0];
         const anchorY = bounds.height * anchors[index][1];
@@ -68,6 +94,8 @@ export default function Contact() {
           anchorX,
           anchorY,
           radius: Math.max(element.offsetWidth * 0.4, 50),
+          halfWidth: element.offsetWidth / 2 + 5,
+          halfHeight: element.offsetHeight / 2 + 5,
         };
       });
     };
@@ -88,50 +116,79 @@ export default function Contact() {
       const bounds = field.getBoundingClientRect();
 
       for (const bubble of bubbles) {
-        bubble.vx += (bubble.anchorX - bubble.x) * 0.012;
-        bubble.vy += (bubble.anchorY - bubble.y) * 0.012;
-        if (pointer) {
+        const isHovered = bubble.element.matches(":hover");
+
+        if (isHovered) {
+          bubble.vx *= 0.72;
+          bubble.vy *= 0.72;
+        } else {
+          bubble.vx += (bubble.anchorX - bubble.x) * 0.0008;
+          bubble.vy += (bubble.anchorY - bubble.y) * 0.0008;
+        }
+
+        if (pointer && !isHovered) {
           const dx = bubble.x - pointer.x;
           const dy = bubble.y - pointer.y;
           const distance = Math.max(Math.hypot(dx, dy), 1);
-          const reach = bubble.radius + 85;
+          const reach = bubble.radius + 22;
           if (distance < reach) {
-            const force = (reach - distance) * 0.018;
+            const force = Math.min((reach - distance) * 0.0032, 0.22);
             bubble.vx += (dx / distance) * force;
             bubble.vy += (dy / distance) * force;
           }
         }
       }
 
-      for (let i = 0; i < bubbles.length; i += 1) {
-        for (let j = i + 1; j < bubbles.length; j += 1) {
-          const first = bubbles[i];
-          const second = bubbles[j];
-          const dx = second.x - first.x;
-          const dy = second.y - first.y;
-          const distance = Math.max(Math.hypot(dx, dy), 1);
-          const minimum = first.radius + second.radius;
-          if (distance < minimum) {
-            const push = (minimum - distance) * 0.028;
-            const nx = dx / distance;
-            const ny = dy / distance;
-            first.vx -= nx * push;
-            first.vy -= ny * push;
-            second.vx += nx * push;
-            second.vy += ny * push;
+      for (const bubble of bubbles) {
+        bubble.vx *= 0.975;
+        bubble.vy *= 0.975;
+        bubble.x += bubble.vx;
+        bubble.y += bubble.vy;
+      }
+
+      for (let pass = 0; pass < 3; pass += 1) {
+        for (let i = 0; i < bubbles.length; i += 1) {
+          for (let j = i + 1; j < bubbles.length; j += 1) {
+            const first = bubbles[i];
+            const second = bubbles[j];
+            const dx = second.x - first.x;
+            const dy = second.y - first.y;
+            const overlapX = first.halfWidth + second.halfWidth - Math.abs(dx);
+            const overlapY = first.halfHeight + second.halfHeight - Math.abs(dy);
+
+            if (overlapX > 0 && overlapY > 0) {
+              if (overlapX < overlapY) {
+                const direction = dx >= 0 ? 1 : -1;
+                const correction = overlapX / 2 + 0.5;
+                first.x -= direction * correction;
+                second.x += direction * correction;
+                first.vx -= direction * 0.18;
+                second.vx += direction * 0.18;
+              } else {
+                const direction = dy >= 0 ? 1 : -1;
+                const correction = overlapY / 2 + 0.5;
+                first.y -= direction * correction;
+                second.y += direction * correction;
+                first.vy -= direction * 0.18;
+                second.vy += direction * 0.18;
+              }
+            }
           }
+        }
+
+        for (const bubble of bubbles) {
+          bubble.x = Math.min(
+            Math.max(bubble.x, bubble.halfWidth),
+            bounds.width - bubble.halfWidth,
+          );
+          bubble.y = Math.min(
+            Math.max(bubble.y, bubble.halfHeight),
+            bounds.height - bubble.halfHeight,
+          );
         }
       }
 
       for (const bubble of bubbles) {
-        bubble.vx *= 0.88;
-        bubble.vy *= 0.88;
-        bubble.x += bubble.vx;
-        bubble.y += bubble.vy;
-        const halfWidth = bubble.element.offsetWidth / 2;
-        const halfHeight = bubble.element.offsetHeight / 2;
-        bubble.x = Math.min(Math.max(bubble.x, halfWidth), bounds.width - halfWidth);
-        bubble.y = Math.min(Math.max(bubble.y, halfHeight), bounds.height - halfHeight);
         positionBubble(bubble);
       }
       frameId = requestAnimationFrame(animate);
@@ -154,23 +211,25 @@ export default function Contact() {
       field.removeEventListener("pointerleave", clearPointer);
       window.removeEventListener("resize", layout);
     };
-  }, []);
+  }, [links]);
 
   return (
     <section id="contact" className="overflow-hidden px-6 py-24 text-center sm:py-32">
       <div className="mx-auto max-w-4xl">
-        <h2 className="text-4xl font-semibold tracking-[-0.045em] text-navy sm:text-6xl">
-          Have a world in mind?
+        <h2 className="text-4xl font-semibold tracking-[-0.045em] text-foreground sm:text-6xl">
+          {locale === "da" ? "Har du en verden i tankerne?" : "Have a world in mind?"}
         </h2>
-        <p className="mt-5 text-lg text-navy/65">
-          Move through the ideas — or click one to say hello.
+        <p className="mt-5 text-lg text-muted">
+          {locale === "da"
+            ? "Bevæg dig gennem idéerne — eller klik på en for at sige hej."
+            : "Move through the ideas — or click one to say hello."}
         </p>
         <div
           ref={fieldRef}
-          className="relative mx-auto mt-8 h-[34rem] max-w-3xl touch-none sm:h-80"
+          className="relative mx-auto mt-6 h-[42rem] max-w-3xl touch-none md:h-96"
           aria-label="Contact links"
         >
-          {contactLinks.map((link, index) => (
+          {links.map((link, index) => (
             <a
               key={link.label}
               ref={(element) => { bubbleRefs.current[index] = element; }}

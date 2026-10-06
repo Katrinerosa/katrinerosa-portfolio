@@ -1,7 +1,8 @@
 import ProjectCard from "@/components/ProjectCard";
 import SectionHeading from "@/components/SectionHeading";
+import type { Locale } from "@/lib/locale";
 
-const projects = [
+const sharedProjects = [
   {
     number: "01",
     title: "ReadFlow",
@@ -76,13 +77,69 @@ const projects = [
   },
 ];
 
-export default function SelectedWork() {
+const danishProjects = [
+  {
+    description:
+      "Et adaptivt læseunivers, hvor børn opdager historier og læser i deres eget tempo.",
+    cta: "Se projektet",
+  },
+  {
+    description:
+      "En stemningsfuld weboplevelse, der kombinerer illustration, animation, lyd og kode.",
+    cta: "Gå ind i huset",
+  },
+  {
+    title: "Julekalender",
+    description:
+      "En legende digital kalender med 25 illustrerede og animerede overraskelser.",
+    cta: "Åbn kalenderen",
+  },
+  {
+    title: "Skriveklub på biblioteket",
+    description:
+      "En fantasy-skriveklub på det lokale bibliotek for kommende fantasyforfattere.",
+    cta: "Se workshoppen",
+  },
+  {
+    description:
+      "Et kreativt studio med fokus på illustration og interaktive oplevelser.",
+    cta: "Se studiet",
+  },
+  {
+    title: "Deltager på Web Summit 2026",
+    description:
+      "Et møde med nye idéer, teknologi og kreative mennesker på Web Summit 2026.",
+    cta: "Læs mere",
+  },
+];
+
+const englishOverrides = [
+  {},
+  {},
+  {},
+  {},
+  {},
+  {
+    title: "Attending Web Summit 2026",
+    description:
+      "Exploring new ideas, technology, and creative connections at Web Summit 2026.",
+    cta: "Read more",
+  },
+];
+
+export default function SelectedWork({ locale }: { locale: Locale }) {
+  const projects = sharedProjects.map((project, index) => ({
+    ...project,
+    ...(locale === "da" ? danishProjects[index] : englishOverrides[index]),
+  }));
+
   return (
     <section id="work" className="px-6 py-24 sm:py-32">
       <div className="mx-auto max-w-7xl">
-        <SectionHeading title="Selected work">
-          Digital experiences shaped by storytelling, illustration, and
-          thoughtful frontend development.
+        <SectionHeading title={locale === "da" ? "Udvalgte projekter" : "Selected work"}>
+          {locale === "da"
+            ? "Digitale oplevelser formet af fortælling, illustration og gennemtænkt frontendudvikling."
+            : "Digital experiences shaped by storytelling, illustration, and thoughtful frontend development."}
         </SectionHeading>
 
         <div className="grid gap-6 md:grid-cols-3">
