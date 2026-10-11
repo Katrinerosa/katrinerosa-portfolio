@@ -12,6 +12,7 @@ export type ProjectCardProps = {
   cta: string;
   href?: string;
   imagePosition?: string;
+  visual?: "founder-club";
 };
 
 export default function ProjectCard({
@@ -25,11 +26,33 @@ export default function ProjectCard({
   cta,
   href,
   imagePosition = "object-center",
+  visual,
 }: ProjectCardProps) {
   const card = (
     <article className="group flex h-full min-w-0 flex-col overflow-hidden border border-border bg-surface transition duration-300 hover:-translate-y-2 hover:shadow-[0_24px_55px_rgb(26_59_93_/_0.15)]">
       <div className="relative aspect-[4/3] overflow-hidden bg-navy">
-        {video ? (
+        {visual === "founder-club" ? (
+          <div
+            role="img"
+            aria-label={imageAlt}
+            className="absolute inset-0 overflow-hidden bg-[#f4f0e7] text-[#151f3d]"
+          >
+            <div className="absolute left-1/2 top-[56%] aspect-square w-[72%] -translate-x-1/2 -translate-y-[55%] rotate-[-7deg] rounded-[46%_54%_48%_52%/54%_43%_57%_46%] bg-[#b9ff45]" />
+            <div className="absolute left-1/2 top-[56%] aspect-square w-[61%] -translate-x-1/2 -translate-y-[57%] rounded-full border-2 border-[#151f3d] bg-[#f29ab0]">
+              <Image
+                src="/projects/kreativ-founder-klub/wolf.png"
+                alt=""
+                fill
+                sizes="(max-width: 768px) 61vw, 21vw"
+                className="object-contain p-[10%]"
+              />
+            </div>
+
+            <p className="absolute bottom-[7%] right-[6%] rounded-full border-2 border-[#151f3d] bg-[#fbf8f1] px-3 py-2 text-center text-[0.58rem] font-extrabold leading-[1.15] shadow-[3px_4px_0_#151f3d]">
+              Du behøver ikke<br />bygge alene
+            </p>
+          </div>
+        ) : video ? (
           <video
             className="h-full w-full object-cover transition duration-500 group-hover:scale-[1.035]"
             autoPlay
@@ -47,6 +70,7 @@ export default function ProjectCard({
             src={image}
             alt={imageAlt}
             fill
+            loading={number === "01" ? "eager" : "lazy"}
             sizes="(max-width: 768px) 100vw, 33vw"
             className={`object-cover transition duration-500 group-hover:scale-[1.035] ${imagePosition}`}
           />

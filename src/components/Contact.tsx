@@ -75,7 +75,7 @@ export default function Contact({ locale }: { locale: Locale }) {
     if (!field || elements.length !== links.length) return;
 
     let frameId = 0;
-    let pointer: { x: number; y: number } | null = null;
+    let pointer: { x: number; y: number; vx: number; vy: number } | null = null;
     let bubbles: Bubble[] = [];
 
     const layout = () => {
@@ -102,7 +102,14 @@ export default function Contact({ locale }: { locale: Locale }) {
 
     const movePointer = (event: PointerEvent) => {
       const bounds = field.getBoundingClientRect();
-      pointer = { x: event.clientX - bounds.left, y: event.clientY - bounds.top };
+      const x = event.clientX - bounds.left;
+      const y = event.clientY - bounds.top;
+      pointer = {
+        x,
+        y,
+        vx: pointer ? Math.max(-24, Math.min(24, x - pointer.x)) : 0,
+        vy: pointer ? Math.max(-24, Math.min(24, y - pointer.y)) : 0,
+      };
     };
     const clearPointer = () => { pointer = null; };
 
@@ -119,31 +126,36 @@ export default function Contact({ locale }: { locale: Locale }) {
         const isHovered = bubble.element.matches(":hover");
 
         if (isHovered) {
-          bubble.vx *= 0.72;
-          bubble.vy *= 0.72;
+          bubble.vx = 0;
+          bubble.vy = 0;
         } else {
-          bubble.vx += (bubble.anchorX - bubble.x) * 0.0008;
-          bubble.vy += (bubble.anchorY - bubble.y) * 0.0008;
+          bubble.vx += (bubble.anchorX - bubble.x) * 0.00035;
+          bubble.vy += (bubble.anchorY - bubble.y) * 0.00035;
         }
 
         if (pointer && !isHovered) {
           const dx = bubble.x - pointer.x;
           const dy = bubble.y - pointer.y;
           const distance = Math.max(Math.hypot(dx, dy), 1);
-          const reach = bubble.radius + 22;
+          const reach = bubble.radius + 42;
           if (distance < reach) {
-            const force = Math.min((reach - distance) * 0.0032, 0.22);
-            bubble.vx += (dx / distance) * force;
-            bubble.vy += (dy / distance) * force;
+            const force = Math.min((reach - distance) * 0.012, 0.7);
+            bubble.vx += (dx / distance) * force + pointer.vx * 0.055;
+            bubble.vy += (dy / distance) * force + pointer.vy * 0.055;
           }
         }
       }
 
       for (const bubble of bubbles) {
-        bubble.vx *= 0.975;
-        bubble.vy *= 0.975;
+        bubble.vx *= 0.988;
+        bubble.vy *= 0.988;
         bubble.x += bubble.vx;
         bubble.y += bubble.vy;
+      }
+
+      if (pointer) {
+        pointer.vx *= 0.65;
+        pointer.vy *= 0.65;
       }
 
       for (let pass = 0; pass < 3; pass += 1) {
@@ -157,20 +169,39 @@ export default function Contact({ locale }: { locale: Locale }) {
             const overlapY = first.halfHeight + second.halfHeight - Math.abs(dy);
 
             if (overlapX > 0 && overlapY > 0) {
+              const firstStopped = first.element.matches(":hover");
+              const secondStopped = second.element.matches(":hover");
+
               if (overlapX < overlapY) {
                 const direction = dx >= 0 ? 1 : -1;
-                const correction = overlapX / 2 + 0.5;
-                first.x -= direction * correction;
-                second.x += direction * correction;
-                first.vx -= direction * 0.18;
-                second.vx += direction * 0.18;
+                const correction = overlapX + 0.5;
+                if (firstStopped) {
+                  second.x += direction * correction;
+                  second.vx += direction * 0.5;
+                } else if (secondStopped) {
+                  first.x -= direction * correction;
+                  first.vx -= direction * 0.5;
+                } else {
+                  first.x -= direction * correction * 0.5;
+                  second.x += direction * correction * 0.5;
+                  first.vx -= direction * 0.32;
+                  second.vx += direction * 0.32;
+                }
               } else {
                 const direction = dy >= 0 ? 1 : -1;
-                const correction = overlapY / 2 + 0.5;
-                first.y -= direction * correction;
-                second.y += direction * correction;
-                first.vy -= direction * 0.18;
-                second.vy += direction * 0.18;
+                const correction = overlapY + 0.5;
+                if (firstStopped) {
+                  second.y += direction * correction;
+                  second.vy += direction * 0.5;
+                } else if (secondStopped) {
+                  first.y -= direction * correction;
+                  first.vy -= direction * 0.5;
+                } else {
+                  first.y -= direction * correction * 0.5;
+                  second.y += direction * correction * 0.5;
+                  first.vy -= direction * 0.32;
+                  second.vy += direction * 0.32;
+                }
               }
             }
           }

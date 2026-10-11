@@ -5,6 +5,18 @@ import type { Locale } from "@/lib/locale";
 const sharedProjects = [
   {
     number: "01",
+    title: "Kreativ Founder Klub",
+    description:
+      "A digital membership concept with authentication, realtime chat, and a protected member experience.",
+    tags: "Product · Frontend · Supabase",
+    image: "/projects/kreativ-founder-klub/preview-current.png",
+    imageAlt: "Preview of the Kreativ Founder Klub website",
+    visual: "founder-club" as const,
+    cta: "View case",
+    href: "/en/kreativ-founder-klub",
+  },
+  {
+    number: "02",
     title: "ReadFlow",
     description:
       "An adaptive reading universe where children discover stories and read at their own pace.",
@@ -15,7 +27,7 @@ const sharedProjects = [
     cta: "View project",
   },
   {
-    number: "02",
+    number: "03",
     title: "Haunted House",
     description:
       "An atmospheric web experience combining illustration, animation, sound, and code.",
@@ -27,7 +39,7 @@ const sharedProjects = [
     href: "/haunted-house",
   },
   {
-    number: "03",
+    number: "04",
     title: "Advent Calendar",
     description:
       "A playful digital calendar with 25 illustrated and animated surprises.",
@@ -39,7 +51,7 @@ const sharedProjects = [
     href: "/advent-calendar",
   },
   {
-    number: "04",
+    number: "05",
     title: "Library Writingclub",
     description:
       "A fantasy writing club held in the local library for aspiring fantasy authors.",
@@ -52,7 +64,7 @@ const sharedProjects = [
   },
     
   {
-    number: "05",
+    number: "06",
     title: "Pensel og Pixel",
     description:
       "A creative studio specializing in illustration and interactive experiences.",
@@ -63,8 +75,8 @@ const sharedProjects = [
     cta: "View the studio",
     href: "https://penselogpixel.dk/",
   },
-    {
-    number: "06",
+  {
+    number: "07",
     title: "Deltager på websummit 26",
     description:
       "A creative studio specializing in illustration and interactive experiences.",
@@ -78,6 +90,12 @@ const sharedProjects = [
 ];
 
 const danishProjects = [
+  {
+    description:
+      "Et digitalt medlemsunivers med autentificering, realtidschat og et beskyttet medlemsområde.",
+    cta: "Se casen",
+    href: "/kreativ-founder-klub",
+  },
   {
     description:
       "Et adaptivt læseunivers, hvor børn opdager historier og læser i deres eget tempo.",
@@ -114,6 +132,7 @@ const danishProjects = [
 ];
 
 const englishOverrides = [
+  {},
   {},
   {},
   {},

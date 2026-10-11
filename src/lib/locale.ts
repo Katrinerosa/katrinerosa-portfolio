@@ -7,6 +7,8 @@ export function isEnglishPath(pathname: string) {
 export function languageSwitchPath(pathname: string) {
   if (pathname === "/tarot") return "/en/tarot";
   if (pathname === "/en/tarot") return "/tarot";
+  if (pathname === "/kreativ-founder-klub") return "/en/kreativ-founder-klub";
+  if (pathname === "/en/kreativ-founder-klub") return "/kreativ-founder-klub";
   if (isEnglishPath(pathname)) return "/";
   return "/en";
 }

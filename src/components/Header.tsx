@@ -70,7 +70,7 @@ export default function Header() {
             </ul>
           </nav>
           <Link
-            href={pathname === "/" || pathname === "/tarot" || pathname.startsWith("/en") ? languageSwitchPath(pathname) : pathname}
+            href={pathname === "/" || pathname === "/tarot" || pathname === "/kreativ-founder-klub" || pathname.startsWith("/en") ? languageSwitchPath(pathname) : pathname}
             hrefLang={isEnglish ? "da" : "en"}
             lang={isEnglish ? "da" : "en"}
             onClick={() => setLocalePreference(isEnglish ? "da" : "en")}
