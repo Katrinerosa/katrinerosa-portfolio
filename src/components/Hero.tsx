@@ -26,7 +26,7 @@ export default function Hero({ locale }: { locale: Locale }) {
         priority
         quality={100}
         aria-hidden="true"
-        className="object-cover object-[67%_center] brightness-[1.08] contrast-[1.16] saturate-[1.1] sm:object-[72%_center] sm:brightness-100 lg:scale-[1.015] lg:object-center"
+        className="object-cover object-[67%_center] brightness-[1.02] contrast-[1.22] saturate-[1.18] sm:object-[72%_center] sm:brightness-100 sm:contrast-[1.12] sm:saturate-[1.08] lg:scale-[1.015] lg:object-center"
         sizes="100vw"
       />
 
@@ -39,7 +39,7 @@ export default function Hero({ locale }: { locale: Locale }) {
         aria-hidden="true"
       />
       <div
-        className="absolute inset-0 bg-[radial-gradient(circle_at_68%_35%,rgba(178,197,244,0.3)_0%,rgba(94,115,184,0.14)_25%,transparent_47%)] mix-blend-screen sm:bg-[radial-gradient(circle_at_70%_39%,rgba(142,162,222,0.2)_0%,rgba(81,101,167,0.1)_24%,transparent_48%)]"
+        className="absolute inset-0 bg-[radial-gradient(circle_at_68%_35%,rgba(122,142,211,0.16)_0%,rgba(70,89,153,0.08)_25%,transparent_47%)] mix-blend-screen sm:bg-[radial-gradient(circle_at_70%_39%,rgba(142,162,222,0.2)_0%,rgba(81,101,167,0.1)_24%,transparent_48%)]"
         aria-hidden="true"
       />
       <div
