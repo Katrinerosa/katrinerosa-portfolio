@@ -22,7 +22,7 @@ const copy = {
       "Next.js, React, TypeScript, Supabase/PostgreSQL, API-integration, autentificering, Row Level Security, realtidsfunktioner og Zod-validering.",
     methodLabel: "Udviklingsmetode",
     method:
-      "Agentisk og AI-assisteret softwareudvikling. Jeg omsætter behov til konkrete opgaver, styrer AI-agenter gennem udviklingsprocessen og kvalitetssikrer resultatet gennem kritisk kodegennemgang, test, debugging og dokumentation.",
+      "Jeg omsætter behov til konkrete features og følger dem fra idé til fungerende løsning. Jeg arbejder AI-assisteret og agentisk, men kvalitetssikrer selv resultatet gennem kodegennemgang, test, debugging og dokumentation.",
     builtLabel: "Det byggede jeg",
     builtTitle: "Et sammenhængende flow — ikke kun en flot forside.",
     features: [
@@ -55,7 +55,7 @@ const copy = {
       "Next.js, React, TypeScript, Supabase/PostgreSQL, API integration, authentication, Row Level Security, realtime features, and Zod validation.",
     methodLabel: "Development approach",
     method:
-      "Agentic and AI-assisted software development. I translate needs into concrete tasks, direct AI agents throughout development, and assure quality through critical code review, testing, debugging, and documentation.",
+      "I translate needs into concrete features and take them from idea to working solution. I use an AI-assisted, agentic workflow while remaining responsible for quality through code review, testing, debugging, and documentation.",
     builtLabel: "What I built",
     builtTitle: "A connected product flow — not just a polished homepage.",
     features: [
