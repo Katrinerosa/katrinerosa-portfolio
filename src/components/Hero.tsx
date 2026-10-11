@@ -4,12 +4,12 @@ import type { Locale } from "@/lib/locale";
 
 const copy = {
   da: {
-    title: "Frontendudvikler, illustrator og grundlægger.",
+    title: "Webdesigner, frontendudvikler og illustrator.",
     description:
       "Jeg skaber digitale verdener, hvor kode, illustration og fortælling mødes.",
   },
   en: {
-    title: "Frontend developer, illustrator, and founder.",
+    title: "Web designer, frontend developer, and illustrator.",
     description:
       "I create digital worlds where code, illustration, and storytelling meet.",
   },
