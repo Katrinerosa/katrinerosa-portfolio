@@ -9,6 +9,7 @@ const copy = {
     title: "Kreativ Founder Klub",
     intro:
       "Et konceptuelt medlemsunivers for kreative selvstændige — udviklet fra visuel identitet og UX til autentificering, database og realtidsfunktioner.",
+    live: "Se live demo",
     source: "Se koden på GitHub",
     projectLabel: "Projektet",
     projectTitle: "Fra fællesskabstanke til fungerende produktflow.",
@@ -42,6 +43,7 @@ const copy = {
     title: "Kreativ Founder Klub",
     intro:
       "A conceptual membership experience for creative founders — developed from visual identity and UX through authentication, database, and realtime features.",
+    live: "View live demo",
     source: "View code on GitHub",
     projectLabel: "The project",
     projectTitle: "From a community idea to a working product flow.",
@@ -101,14 +103,24 @@ export default function FounderClubCase({ locale }: { locale: Locale }) {
               <p className="max-w-xl text-lg leading-8 text-[#151f3d]/70 sm:text-xl">
                 {text.intro}
               </p>
-              <a
-                href="https://github.com/Katrinerosa/kreativ_founder-klub"
-                target="_blank"
-                rel="noreferrer"
-                className="mt-7 inline-flex rounded-full border-2 border-[#151f3d] bg-[#b9ff45] px-6 py-3 text-sm font-bold transition hover:-translate-y-1 hover:shadow-[5px_5px_0_#151f3d]"
-              >
-                {text.source} ↗
-              </a>
+              <div className="mt-7 flex flex-wrap gap-3">
+                <a
+                  href="https://creativefounderclub.netlify.app/"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="inline-flex rounded-full border-2 border-[#151f3d] bg-[#b9ff45] px-6 py-3 text-sm font-bold transition hover:-translate-y-1 hover:shadow-[5px_5px_0_#151f3d]"
+                >
+                  {text.live} ↗
+                </a>
+                <a
+                  href="https://github.com/Katrinerosa/kreativ_founder-klub"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="inline-flex rounded-full border-2 border-[#151f3d] bg-[#f8f4eb] px-6 py-3 text-sm font-bold transition hover:-translate-y-1 hover:shadow-[5px_5px_0_#151f3d]"
+                >
+                  {text.source} ↗
+                </a>
+              </div>
             </div>
           </div>
 
