@@ -3,9 +3,9 @@ import Link from "next/link";
 import type { Locale } from "@/lib/locale";
 
 const cards = [
-  { src: "/cards/Mayor-Arcana/the-fool.svg", alt: "The Fool tarot card" },
-  { src: "/cards/Mayor-Arcana/the-high-priestess.svg", alt: "The High Priestess tarot card" },
-  { src: "/cards/Mayor-Arcana/the-moon.svg", alt: "The Moon tarot card" },
+  { src: "/cards/optimized/Mayor-Arcana/the-fool.webp", alt: "The Fool tarot card" },
+  { src: "/cards/optimized/Mayor-Arcana/the-high-priestess.webp", alt: "The High Priestess tarot card" },
+  { src: "/cards/optimized/Mayor-Arcana/the-moon.webp", alt: "The Moon tarot card" },
 ];
 
 export default function TarotPreview({ locale }: { locale: Locale }) {
@@ -47,7 +47,7 @@ export default function TarotPreview({ locale }: { locale: Locale }) {
                     : "translate-x-[25%] rotate-[10deg]"
               }`}
             >
-              <Image src={card.src} alt={card.alt} fill className="object-cover" sizes="208px" />
+              <Image unoptimized src={card.src} alt={card.alt} fill className="object-cover" sizes="208px" />
             </div>
           ))}
         </div>

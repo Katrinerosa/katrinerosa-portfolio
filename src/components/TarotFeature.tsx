@@ -83,10 +83,11 @@ function FlipCard({
         <span className="tarot-flip-card__inner">
           <span className="tarot-flip-card__side tarot-flip-card__back">
             <Image
-              src="/cards/tarot_front.svg"
+              src="/cards/optimized/tarot_front.webp"
               alt=""
               fill
-              priority={priority}
+              preload={priority}
+              unoptimized
               sizes="(max-width: 640px) 280px, 300px"
               className="tarot-flip-card__image"
             />
@@ -96,6 +97,8 @@ function FlipCard({
             {card?.image ? (
               <Image
                 src={card.image}
+                unoptimized
+                loading="eager"
                 alt={text.illustrated(card.name)}
                 fill
                 sizes="(max-width: 640px) 280px, 300px"

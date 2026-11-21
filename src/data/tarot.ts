@@ -208,7 +208,8 @@ function slugify(value: string) {
 }
 
 function getMinorImage(suit: string, value: string) {
-  if (suit === "Coins" && value === "10") {
+  // These original illustrations are not in the repository yet.
+  if ((suit === "Coins" && value === "10") || (suit === "Wands" && value === "9")) {
     return undefined;
   }
 
@@ -216,20 +217,20 @@ function getMinorImage(suit: string, value: string) {
 
   if (suit === "Wands") {
     const wandValue = value === "5" ? "fine" : imageValue;
-    return `/cards/wands/${wandValue}ofwands.svg`;
+    return `/cards/optimized/wands/${wandValue}ofwands.webp`;
   }
 
   if (suit === "Swords") {
-    return `/cards/swords/${imageValue}ofswords.svg`;
+    return `/cards/optimized/swords/${imageValue}ofswords.webp`;
   }
 
   if (suit === "Coins" && value === "4") {
-    return "/cards/Mayor-Arcana/four-of-pentacles.svg";
+    return "/cards/optimized/Mayor-Arcana/four-of-pentacles.webp";
   }
 
   const folder = suit === "Coins" ? "pentacles" : suit.toLowerCase();
   const fileSuit = suit === "Coins" ? "pentacles" : suit.toLowerCase();
-  return `/cards/${folder}/${imageValue}-of-${fileSuit}.svg`;
+  return `/cards/optimized/${folder}/${imageValue}-of-${fileSuit}.webp`;
 }
 
 export const tarotDeck: TarotCard[] = [
@@ -240,7 +241,7 @@ export const tarotDeck: TarotCard[] = [
     family: "Major Arcana" as const,
     symbol: "☾",
     image: majorCardsWithImages.has(name)
-      ? `/cards/Mayor-Arcana/${slugify(name)}.svg`
+      ? `/cards/optimized/Mayor-Arcana/${slugify(name)}.webp`
       : undefined,
   })),
   ...Object.entries(minorArcana).flatMap(([suit, values]) =>
