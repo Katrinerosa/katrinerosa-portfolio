@@ -1134,3 +1134,13 @@ body {
     display: none;
   }
 }
+
+/* Keep card faces stable while a download or the flip animation is in flight. */
+.tarot-flip-card:disabled { cursor: progress; }
+.tarot-classic__actions button:disabled,
+.tarot-classic__footer-actions button:disabled { cursor: wait; }
+.tarot-loading-status {
+  min-height: 1.5rem;
+  margin: 0.75rem 0 0;
+  font-size: 0.875rem;
+}
