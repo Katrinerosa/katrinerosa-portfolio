@@ -103,3 +103,22 @@ This project uses repository-level agent instructions and reusable development s
 ## License
 
 This is a personal portfolio project. The source code and visual material may not be reused without permission.
+
+## Tarot image delivery
+
+The Tarot experience and homepage preview use generated 640px WebP copies in `public/cards/optimized/`. The original SVG artwork remains in `public/cards/`.
+
+Regenerate the web copies with Node.js 22 or newer:
+
+```bash
+npm run images:tarot
+npm run test:tarot
+```
+
+The current 76 illustrated cards plus the card back total 3.98 MB, down from 59.10 MB in the referenced SVG originals (93.27% smaller). The card back is 22.9 KB instead of 4.15 MB. These are file-size comparisons, not measured production loading times. The page prepares only upcoming cards rather than fetching the whole deck.
+
+Card faces are downloaded and decoded before turning. Failed downloads use the existing symbol-and-meaning fallback, and repeated clicks are blocked until the turn finishes. The tests check the complete deck, asset existence and size budgets, decoding readiness, and download failure/retry behavior.
+
+The illustrations for The Sun and 10 of Coins are not present in this repository. Those cards display their symbols and meanings until the original artwork is added. After adding an original, update its entry in `src/data/tarot.ts` and regenerate the WebP copies. Five and Nine of Wands both use their correctly named original illustrations.
+
+A short synthesized paper rustle plays on card interactions and can be switched off. It is a new sound, not a recovered recording from the old portfolio. The audio file loads only after interaction.

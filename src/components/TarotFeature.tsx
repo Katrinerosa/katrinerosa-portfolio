@@ -1,7 +1,8 @@
 "use client";
 
 import Image from "next/image";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { loadTarotImage, prepareTarotCard } from "@/lib/tarot-images";
 import { tarotDeck, type TarotCard } from "@/data/tarot";
 import type { Locale } from "@/lib/locale";
 
@@ -21,6 +22,9 @@ const copy = {
     single: "Ét kort reading",
     newSpread: "Læg tre nye kort",
     shuffle: "Bland alle kort igen",
+    loading: "Henter kortets illustration…",
+    soundOn: "Papirlyd: til",
+    soundOff: "Papirlyd: fra",
     remaining: (amount: number) => `${amount} af 78 kort tilbage`,
   },
   en: {
@@ -36,6 +40,9 @@ const copy = {
     single: "One-card reading",
     newSpread: "Draw three new cards",
     shuffle: "Shuffle the full deck",
+    loading: "Preparing the card illustration…",
+    soundOn: "Paper sound: on",
+    soundOff: "Paper sound: off",
     remaining: (amount: number) => `${amount} of 78 cards remaining`,
   },
 };
@@ -55,6 +62,8 @@ function FlipCard({
   label,
   onClick,
   priority = false,
+  busy = false,
+  loading = false,
   locale,
 }: {
   card: TarotCard | null;
@@ -62,6 +71,8 @@ function FlipCard({
   label?: string;
   onClick: () => void;
   priority?: boolean;
+  busy?: boolean;
+  loading?: boolean;
   locale: Locale;
 }) {
   const text = copy[locale];
@@ -72,6 +83,8 @@ function FlipCard({
         type="button"
         className={`tarot-flip-card ${flipped ? "is-flipped" : ""}`}
         onClick={onClick}
+        disabled={busy}
+        aria-busy={loading}
         aria-label={
           flipped && card
             ? text.turnAgain(card.name)
@@ -83,10 +96,11 @@ function FlipCard({
         <span className="tarot-flip-card__inner">
           <span className="tarot-flip-card__side tarot-flip-card__back">
             <Image
-              src="/cards/tarot_front.svg"
+              src="/cards/optimized/tarot_front.webp"
               alt=""
               fill
-              priority={priority}
+              preload={priority}
+              unoptimized
               sizes="(max-width: 640px) 280px, 300px"
               className="tarot-flip-card__image"
             />
@@ -96,6 +110,8 @@ function FlipCard({
             {card?.image ? (
               <Image
                 src={card.image}
+                unoptimized
+                loading="eager"
                 alt={text.illustrated(card.name)}
                 fill
                 sizes="(max-width: 640px) 280px, 300px"
@@ -133,6 +149,47 @@ export default function TarotFeature({ locale = "da" }: { locale?: Locale }) {
   const [singleFlipped, setSingleFlipped] = useState(false);
   const [spread, setSpread] = useState<TarotCard[]>([]);
   const [spreadFlipped, setSpreadFlipped] = useState([false, false, false]);
+  const [busy, setBusy] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [soundEnabled, setSoundEnabled] = useState(true);
+  const actionInFlight = useRef(false);
+  const turnTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const paperSound = useRef<HTMLAudioElement | null>(null);
+  const mounted = useRef(true);
+
+  useEffect(() => {
+    // Only prepare the next draw, never download the entire deck on arrival.
+    deck.slice(0, mode === "single" ? 1 : 3).forEach((card) => {
+      if (card.image) void loadTarotImage(card.image);
+    });
+  }, [deck, mode]);
+
+  useEffect(() => {
+    mounted.current = true;
+    return () => {
+      mounted.current = false;
+      if (turnTimer.current) clearTimeout(turnTimer.current);
+      paperSound.current?.pause();
+    };
+  }, []);
+
+  function playPaperSound() {
+    if (!soundEnabled) return;
+    const audio = paperSound.current;
+    if (!audio) return;
+    audio.volume = 0.3;
+    audio.currentTime = 0;
+    // Called directly by a user gesture. A browser's audio policy is respected.
+    void audio.play().catch(() => {});
+  }
+
+  function finishTurn() {
+    const duration = window.matchMedia("(prefers-reduced-motion: reduce)").matches ? 0 : 850;
+    turnTimer.current = setTimeout(() => {
+      actionInFlight.current = false;
+      if (mounted.current) setBusy(false);
+    }, duration);
+  }
 
   function takeCards(amount: number) {
     const availableCards = deck.length < amount ? shuffle(tarotDeck) : deck;
@@ -141,53 +198,81 @@ export default function TarotFeature({ locale = "da" }: { locale?: Locale }) {
     return drawnCards;
   }
 
-  function handleSingleCard() {
+  async function handleSingleCard() {
+    if (actionInFlight.current) return;
+    actionInFlight.current = true;
+    setBusy(true);
+    playPaperSound();
     if (singleFlipped) {
       setSingleFlipped(false);
+      finishTurn();
       return;
     }
 
+    setLoading(true);
     const [drawnCard] = takeCards(1);
-    setSingleCard(drawnCard);
+    const prepared = await prepareTarotCard(drawnCard);
+    if (!mounted.current) return;
+    setSingleCard(prepared);
+    setLoading(false);
     setSingleFlipped(true);
+    finishTurn();
   }
 
   function openSpread() {
+    if (actionInFlight.current) return;
+    playPaperSound();
     setMode("spread");
     setSpread(takeCards(3));
     setSpreadFlipped([false, false, false]);
   }
 
   function openSingleReading() {
+    if (actionInFlight.current) return;
+    playPaperSound();
     setMode("single");
     setSingleCard(null);
     setSingleFlipped(false);
   }
 
   function refreshSpread() {
+    if (actionInFlight.current) return;
+    playPaperSound();
     setSpread(takeCards(3));
     setSpreadFlipped([false, false, false]);
   }
 
-  function toggleSpreadCard(index: number) {
-    setSpreadFlipped((current) =>
-      current.map((isFlipped, cardIndex) =>
-        cardIndex === index ? !isFlipped : isFlipped,
-      ),
-    );
+  async function toggleSpreadCard(index: number) {
+    if (actionInFlight.current) return;
+    actionInFlight.current = true;
+    setBusy(true);
+    playPaperSound();
+    if (!spreadFlipped[index]) {
+      setLoading(true);
+      const prepared = await prepareTarotCard(spread[index]);
+      if (!mounted.current) return;
+      setSpread((current) => current.map((card, cardIndex) => cardIndex === index ? prepared : card));
+      setLoading(false);
+    }
+    setSpreadFlipped((current) => current.map((isFlipped, cardIndex) => cardIndex === index ? !isFlipped : isFlipped));
+    finishTurn();
   }
 
   function resetDeck() {
-    setDeck(shuffle(tarotDeck));
+    if (actionInFlight.current) return;
+    playPaperSound();
+    const shuffled = shuffle(tarotDeck);
+    setDeck(mode === "spread" ? shuffled.slice(3) : shuffled);
     setSingleCard(null);
     setSingleFlipped(false);
-    setSpread([]);
+    setSpread(mode === "spread" ? shuffled.slice(0, 3) : []);
     setSpreadFlipped([false, false, false]);
   }
 
   return (
     <section className="tarot-experience tarot-classic">
       <div className="tarot-stars" aria-hidden="true" />
+      <audio ref={paperSound} src="/sounds/paper-turn.wav" preload="none" aria-hidden="true" />
 
       <div className="tarot-classic__shell">
         <header className="tarot-classic__intro">
@@ -198,11 +283,11 @@ export default function TarotFeature({ locale = "da" }: { locale?: Locale }) {
 
         <div className="tarot-classic__actions">
           {mode === "single" ? (
-            <button type="button" onClick={openSpread}>
+            <button type="button" onClick={openSpread} disabled={busy}>
               {text.more}
             </button>
           ) : (
-            <button type="button" onClick={openSingleReading}>
+            <button type="button" onClick={openSingleReading} disabled={busy}>
               {text.single}
             </button>
           )}
@@ -216,6 +301,8 @@ export default function TarotFeature({ locale = "da" }: { locale?: Locale }) {
               onClick={handleSingleCard}
               priority
               locale={locale}
+              busy={busy}
+              loading={loading}
             />
           </div>
         ) : (
@@ -229,20 +316,28 @@ export default function TarotFeature({ locale = "da" }: { locale?: Locale }) {
                 onClick={() => toggleSpreadCard(index)}
                 priority={index === 0}
                 locale={locale}
+                busy={busy}
+                loading={loading}
               />
             ))}
           </div>
         )}
 
+        <p className="tarot-loading-status" role="status">{loading ? text.loading : ""}</p>
+
         <div className="tarot-classic__footer-actions">
           {mode === "spread" && (
-            <button type="button" onClick={refreshSpread}>
+            <button type="button" onClick={refreshSpread} disabled={busy}>
               {text.newSpread}
             </button>
           )}
-          <button type="button" onClick={resetDeck}>
+          <button type="button" onClick={resetDeck} disabled={busy}>
             {text.shuffle}
           </button>
+          <button type="button" aria-pressed={soundEnabled} onClick={() => {
+            if (soundEnabled) paperSound.current?.pause();
+            setSoundEnabled((enabled) => !enabled);
+          }}>{soundEnabled ? text.soundOn : text.soundOff}</button>
           <p>{text.remaining(deck.length)}</p>
         </div>
       </div>

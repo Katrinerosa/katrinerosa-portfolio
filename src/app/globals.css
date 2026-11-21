@@ -1134,3 +1134,10 @@ body {
     display: none;
   }
 }
+
+/* Reserve space so the loading status does not shift the card controls. */
+.tarot-loading-status {
+  min-height: 1.5rem;
+  margin: 0.75rem 0 0;
+  font-size: 0.875rem;
+}
