@@ -7,6 +7,7 @@ import { tarotDeck, type TarotCard } from "@/data/tarot";
 import type { Locale } from "@/lib/locale";
 
 type ReadingMode = "single" | "spread";
+type CardTurn = { timer?: ReturnType<typeof setTimeout> };
 
 const copy = {
   da: {
@@ -152,10 +153,8 @@ export default function TarotFeature({ locale = "da" }: { locale?: Locale }) {
   const [busy, setBusy] = useState(false);
   const [loading, setLoading] = useState(false);
   const [soundEnabled, setSoundEnabled] = useState(true);
-  const actionInFlight = useRef(false);
-  const turnTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const activeTurn = useRef<CardTurn | null>(null);
   const paperSound = useRef<HTMLAudioElement | null>(null);
-  const mounted = useRef(true);
 
   useEffect(() => {
     // Only prepare the next draw, never download the entire deck on arrival.
@@ -165,11 +164,11 @@ export default function TarotFeature({ locale = "da" }: { locale?: Locale }) {
   }, [deck, mode]);
 
   useEffect(() => {
-    mounted.current = true;
+    const audio = paperSound.current;
     return () => {
-      mounted.current = false;
-      if (turnTimer.current) clearTimeout(turnTimer.current);
-      paperSound.current?.pause();
+      clearTimeout(activeTurn.current?.timer);
+      activeTurn.current = null;
+      audio?.pause();
     };
   }, []);
 
@@ -183,11 +182,21 @@ export default function TarotFeature({ locale = "da" }: { locale?: Locale }) {
     void audio.play().catch(() => {});
   }
 
-  function finishTurn() {
+  function startTurn() {
+    if (activeTurn.current) return null;
+    const turn: CardTurn = {};
+    activeTurn.current = turn;
+    setBusy(true);
+    playPaperSound();
+    return turn;
+  }
+
+  function finishTurn(turn: CardTurn) {
     const duration = window.matchMedia("(prefers-reduced-motion: reduce)").matches ? 0 : 850;
-    turnTimer.current = setTimeout(() => {
-      actionInFlight.current = false;
-      if (mounted.current) setBusy(false);
+    turn.timer = setTimeout(() => {
+      if (activeTurn.current !== turn) return;
+      activeTurn.current = null;
+      setBusy(false);
     }, duration);
   }
 
@@ -199,28 +208,26 @@ export default function TarotFeature({ locale = "da" }: { locale?: Locale }) {
   }
 
   async function handleSingleCard() {
-    if (actionInFlight.current) return;
-    actionInFlight.current = true;
-    setBusy(true);
-    playPaperSound();
+    const turn = startTurn();
+    if (!turn) return;
     if (singleFlipped) {
       setSingleFlipped(false);
-      finishTurn();
+      finishTurn(turn);
       return;
     }
 
     setLoading(true);
     const [drawnCard] = takeCards(1);
     const prepared = await prepareTarotCard(drawnCard);
-    if (!mounted.current) return;
+    if (activeTurn.current !== turn) return;
     setSingleCard(prepared);
     setLoading(false);
     setSingleFlipped(true);
-    finishTurn();
+    finishTurn(turn);
   }
 
   function openSpread() {
-    if (actionInFlight.current) return;
+    if (activeTurn.current) return;
     playPaperSound();
     setMode("spread");
     setSpread(takeCards(3));
@@ -228,7 +235,11 @@ export default function TarotFeature({ locale = "da" }: { locale?: Locale }) {
   }
 
   function openSingleReading() {
-    if (actionInFlight.current) return;
+    // A late image decode must not update a spread that the reader has left.
+    clearTimeout(activeTurn.current?.timer);
+    activeTurn.current = null;
+    setBusy(false);
+    setLoading(false);
     playPaperSound();
     setMode("single");
     setSingleCard(null);
@@ -236,30 +247,28 @@ export default function TarotFeature({ locale = "da" }: { locale?: Locale }) {
   }
 
   function refreshSpread() {
-    if (actionInFlight.current) return;
+    if (activeTurn.current) return;
     playPaperSound();
     setSpread(takeCards(3));
     setSpreadFlipped([false, false, false]);
   }
 
   async function toggleSpreadCard(index: number) {
-    if (actionInFlight.current) return;
-    actionInFlight.current = true;
-    setBusy(true);
-    playPaperSound();
+    const turn = startTurn();
+    if (!turn) return;
     if (!spreadFlipped[index]) {
       setLoading(true);
       const prepared = await prepareTarotCard(spread[index]);
-      if (!mounted.current) return;
+      if (activeTurn.current !== turn) return;
       setSpread((current) => current.map((card, cardIndex) => cardIndex === index ? prepared : card));
       setLoading(false);
     }
     setSpreadFlipped((current) => current.map((isFlipped, cardIndex) => cardIndex === index ? !isFlipped : isFlipped));
-    finishTurn();
+    finishTurn(turn);
   }
 
   function resetDeck() {
-    if (actionInFlight.current) return;
+    if (activeTurn.current) return;
     playPaperSound();
     const shuffled = shuffle(tarotDeck);
     setDeck(mode === "spread" ? shuffled.slice(3) : shuffled);
@@ -287,7 +296,7 @@ export default function TarotFeature({ locale = "da" }: { locale?: Locale }) {
               {text.more}
             </button>
           ) : (
-            <button type="button" onClick={openSingleReading} disabled={busy}>
+            <button type="button" onClick={openSingleReading}>
               {text.single}
             </button>
           )}
