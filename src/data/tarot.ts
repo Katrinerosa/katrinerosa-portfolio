@@ -208,16 +208,15 @@ function slugify(value: string) {
 }
 
 function getMinorImage(suit: string, value: string) {
-  // These original illustrations are not in the repository yet.
-  if ((suit === "Coins" && value === "10") || (suit === "Wands" && value === "9")) {
+  // This original illustration is not in the repository yet.
+  if (suit === "Coins" && value === "10") {
     return undefined;
   }
 
   const imageValue = numberNames[value] ?? value.toLowerCase();
 
   if (suit === "Wands") {
-    const wandValue = value === "5" ? "fine" : imageValue;
-    return `/cards/optimized/wands/${wandValue}ofwands.webp`;
+    return `/cards/optimized/wands/${imageValue}ofwands.webp`;
   }
 
   if (suit === "Swords") {

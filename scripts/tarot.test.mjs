@@ -27,6 +27,15 @@ test("the full deck has valid copy and every referenced illustration exists with
   assert.ok(bytes < 4.5 * 1024 * 1024, "The complete illustrated deck exceeds its total budget");
 });
 
+test("Five and Nine of Wands both reference their restored illustrations", async () => {
+  for (const name of ["5 of Wands", "9 of Wands"]) {
+    const card = tarotDeck.find((entry) => entry.name === name);
+    assert.ok(card?.image, `${name} must have its illustration`);
+    await stat(resolve(root, "public", card.image.slice(1)));
+  }
+  assert.equal(tarotDeck.find((card) => card.name === "5 of Wands").image, "/cards/optimized/wands/fiveofwands.webp");
+});
+
 test("a card remains pending until image decoding finishes and concurrent requests share the download", async () => {
   let finish;
   let downloads = 0;
