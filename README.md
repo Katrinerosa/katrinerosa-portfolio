@@ -4,6 +4,20 @@ A personal portfolio combining frontend development, product thinking, illustrat
 
 The portfolio presents selected digital projects, interactive experiments, and case studies created by Katrine Rosa Beck.
 
+## Explore the portfolio
+
+- [Visit the portfolio](https://katrinerosa.com) or [open the English version](https://katrinerosa.com/en).
+- For a quick code review, start with the examples below.
+
+| Area | Code to explore | What to look for |
+| --- | --- | --- |
+| Page composition | [HomePageContent.tsx](src/components/HomePageContent.tsx) | A shared page assembled from focused components and a typed locale prop. |
+| Danish and English content | [Locale utilities](src/lib/locale.ts), [Danish route](src/app/page.tsx), [English route](src/app/en/page.tsx) | How the two language routes share components. |
+| Interactive UI | [Contact.tsx](src/components/Contact.tsx) | Pointer interaction, collision handling, animation cleanup, and a reduced-motion alternative. |
+| Image gallery | [Gallery routes](src/app/gallery), [Image utilities](src/lib/images.ts) | How gallery pages and image handling are organized. |
+
+The portfolio combines frontend engineering with original illustration and visual storytelling. The examples above provide a starting point for discussing implementation choices in an interview or project conversation.
+
 ## Selected work
 
 - **Kreativ Founder Klub** — A membership concept with Supabase authentication, Zod validation, realtime chat, and a protected dashboard.
